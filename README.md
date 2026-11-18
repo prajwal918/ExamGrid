@@ -29,7 +29,8 @@
 
 ## 📦 Project Deliverables & Downloads
 
-- 📦 **[ExamGrid_Best_Final.zip](ExamGrid_Best_Final.zip)** (53.9 MB) — Standalone distribution with pre-built application JAR and 1-click Windows launchers (`run.bat` / `run.ps1`).
+- 📦 **[Download ExamGrid_Best_Final.zip (53.9 MB)](https://github.com/prajwal918/ExamGrid/releases/download/v1.0.0/ExamGrid_Best_Final.zip)** — Complete standalone pre-packaged distribution with pre-built application JAR (`target/examgrid-1.0.0.jar`) and 1-click Windows launchers (`run.bat` / `run.ps1`). Extract and double-click `run.bat` to run instantly.
+- 🚀 **[GitHub Release v1.0.0](https://github.com/prajwal918/ExamGrid/releases/tag/v1.0.0)** — View official release notes and binary assets.
 - 📄 **[05_Final_Lab_Project_Report.pdf](docs/reports/05_Final_Lab_Project_Report.pdf)** (40 Pages) — Complete official department report with Certificate, Declaration, Literature Survey, System Design, Algorithms, and Test Results.
 - 📄 **[ExamGrid_Abstract.pdf](docs/reports/ExamGrid_Abstract.pdf)** (1 Page) — Executive summary and project abstract.
 - 📚 **Full IEEE Report Series in [`docs/reports/`](docs/reports/):**
