@@ -1,338 +1,388 @@
-\documentclass[12pt,a4paper,oneside]{report}
-\usepackage{examgrid}
-\setdoc{Mini Project Report}{CS3603-1}
-\newcommand{\src}{../../src/main/java/com/examgrid}
+\documentclass[12pt,letterpaper]{article}
 
-\titleformat{\chapter}[display]{\normalfont\bfseries\color{egnavy}}{\large CHAPTER \thechapter}{4pt}{\LARGE}
-\titlespacing*{\chapter}{0pt}{-10pt}{18pt}
+\newcommand{\projectname}{ExamGrid}
+\newcommand{\projecttitle}{ExamGrid: Automated Exam Seating and Invigilation Allocation System}
+\newcommand{\instructorname}{Ms. Ankitha A Nayak}
+\newcommand{\instructordesignation}{Assistant Professor Grade - II}
+\newcommand{\sectionname}{D}
+\newcommand{\submissiondate}{20/11/2026}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathptmx}
+\usepackage[scaled=0.92]{helvet}
+\usepackage[letterpaper,top=2.3cm,bottom=2.3cm,left=2.5cm,right=2.5cm,headheight=16pt,headsep=14pt,footskip=30pt]{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{array,tabularx,longtable}
+\usepackage{float}
+\usepackage[font=small,labelsep=colon]{caption}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{amsmath,amssymb}
+\usepackage{listings}
+\usepackage{tikz}
+\usepackage[hidelinks]{hyperref}
+\usetikzlibrary{shapes.geometric,shapes.misc,shapes.multipart,arrows.meta,positioning,fit,calc}
+
+\definecolor{egnavy}{RGB}{13,59,102}
+\definecolor{eggold}{RGB}{244,162,89}
+\definecolor{eglight}{RGB}{232,239,247}
+\definecolor{eggrey}{RGB}{90,100,117}
+\definecolor{codebg}{RGB}{248,249,251}
+\definecolor{codekw}{RGB}{0,51,153}
+\definecolor{codestr}{RGB}{163,21,21}
+
+\onehalfspacing
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{8pt}
+\emergencystretch=3em
+\sloppy
+\let\origtexttt\texttt
+\renewcommand{\texttt}[1]{#1}
+\setlist[itemize]{itemsep=3pt,topsep=4pt,leftmargin=1.4cm,label=\textbullet}
+\setlist[enumerate]{itemsep=3pt,topsep=4pt,leftmargin=1.4cm}
+
+\renewcommand{\thesection}{\arabic{section}}
+\titleformat{\section}{\centering\sffamily\bfseries\large\MakeUppercase}{}{0pt}{}
+\titlespacing*{\section}{0pt}{0pt}{14pt}
+\titleformat{\subsection}{\sffamily\bfseries\normalsize}{\thesubsection}{0.5em}{}
+\titlespacing*{\subsection}{0pt}{10pt}{4pt}
+\newcommand{\chapter}[1]{\clearpage\refstepcounter{section}\section*{#1}\label{ch:\thesection}}
+\newcommand{\chaplabel}[1]{\label{#1}}
+\makeatletter
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\@addtoreset{subsection}{section}
+\@addtoreset{figure}{section}
+\@addtoreset{table}{section}
+\makeatother
+\renewcommand{\thefigure}{\arabic{section}.\arabic{figure}}
+\renewcommand{\thetable}{\arabic{section}.\arabic{table}}
+
+\fancypagestyle{body}{
+  \fancyhf{}
+  \fancyhead[L]{\sffamily\bfseries\small\projectname}
+  \fancyhead[R]{\sffamily\bfseries\small 2026-27}
+  \fancyfoot[L]{\sffamily\bfseries\small Dept of CSE, NMAMIT, Nitte}
+  \fancyfoot[R]{\sffamily\bfseries\small Page \thepage}
+  \renewcommand{\headrulewidth}{1.2pt}
+  \renewcommand{\footrulewidth}{1.2pt}
+}
+\fancypagestyle{front}{
+  \fancyhf{}
+  \fancyfoot[C]{\small\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+
+\lstdefinestyle{java}{
+  language=Java, basicstyle=\ttfamily\scriptsize, keywordstyle=\color{codekw}\bfseries,
+  stringstyle=\color{codestr}, backgroundcolor=\color{codebg}, frame=single,
+  rulecolor=\color{black!25}, numbers=left, numberstyle=\tiny\color{gray},
+  breaklines=true, showstringspaces=false, tabsize=4, xleftmargin=1.5em, framexleftmargin=1.5em,
+  morekeywords={record,var}, aboveskip=6pt, belowskip=6pt, linespread=1.0
+}
+\lstdefinestyle{plain}{
+  basicstyle=\ttfamily\scriptsize, backgroundcolor=\color{codebg}, frame=single,
+  rulecolor=\color{black!25}, breaklines=true, showstringspaces=false, columns=fullflexible,
+  aboveskip=6pt, belowskip=6pt
+}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcommand{\hd}[1]{\textbf{#1}}
+\newenvironment{gridtable}[1]{\par\centering\sffamily\footnotesize\renewcommand{\arraystretch}{1.25}\tabularx{\linewidth}{#1}}{\endtabularx\par}
+
+\newcommand{\screenshot}[2]{%
+  \begin{figure}[H]\centering
+  \IfFileExists{screenshots/#1.png}{%
+    \fbox{\includegraphics[width=0.9\linewidth,height=0.36\textheight,keepaspectratio]{screenshots/#1.png}}%
+  }{%
+    \fbox{\parbox[c][6.2cm][c]{0.86\linewidth}{\centering\sffamily\color{eggrey}\small
+      Screenshot: #2\\[3pt]\footnotesize save as \origtexttt{docs/latex/screenshots/\detokenize{#1}.png} and recompile}}%
+  }
+  \caption{#2}\label{fig:#1}
+  \end{figure}}
+
+\newcommand{\tocline}[2]{\noindent #1\dotfill #2\par\vspace{2pt}}
 
 \begin{document}
-\nmamitcover{Mini Project Report}{Submitted in partial fulfilment of the requirements of\\Java and Spring Framework Laboratory (CS3603-1)\\Bachelor of Technology in Computer Science and Engineering}{\small Under the guidance of\\[2pt]\textbf{\rule{6cm}{0.4pt}}\\Department of Computer Science and Engineering\\[6pt]November 2026}
 
+\pagestyle{front}
 \pagenumbering{roman}
-\thispagestyle{plain}
+
+\begin{titlepage}
+\begin{spacing}{1.0}\setlength{\parskip}{2pt}
+\centering
+\vspace*{-2.2cm}
+\includegraphics[width=0.8\linewidth]{images/nitte_banner.png}\par
+\vspace{0.2cm}
+{\setlength{\fboxsep}{2pt}\colorbox{black}{\textcolor{white}{\sffamily\bfseries\small\,Department of Computer Science \& Engineering\,}}}\par
+\vspace{-1pt}\rule{\linewidth}{0.8pt}\par
+\vspace{0.45cm}
+{\Large Report on Mini Project\par}
+\vspace{0.45cm}
+{\fontsize{21}{26}\selectfont ExamGrid: An Automated Exam\\Seating and Invigilation\\Allocation System\par}
+\vspace{0.45cm}
+{\large Course Code: CS3603-1\\Course Name: Java and Spring Framework Lab\par}
+\vspace{0.45cm}
+{\large Semester: V SEM \hspace{3.5cm} Section: \sectionname\par}
+\vspace{0.45cm}
+{\Large\bfseries Submitted To:\par}
+\vspace{2pt}
+{\large \instructorname\\\instructordesignation\\Department of Computer Science and Engineering\par}
+\vspace{0.45cm}
+{\Large\bfseries Submitted By:\par}
+\vspace{2pt}
+{\large Prajwal Jogi (NNM25CS522)\\Prajwal Acharya (NNM25CS521)\\Sathwik P Shetty (NNM24CS224)\\Satvik Hegde (NNM24CS225)\par}
+\vspace{0.45cm}
+{\large\bfseries Date of submission:\par}
+{\large \submissiondate\par}
+\vfill
+\hfill{\large\bfseries Signature of the Course Instructor}
+\end{spacing}
+\end{titlepage}
+
+\setcounter{page}{2}
 \begin{center}
-{\large\bfseries NMAM INSTITUTE OF TECHNOLOGY, NITTE}\\[2pt]
-Department of Computer Science and Engineering\\[1.2cm]
-{\Large\bfseries\color{egnavy} CERTIFICATE}
-\end{center}
+\includegraphics[width=0.62\linewidth]{images/nitte_logo.png}\par
 \vspace{0.6cm}
-\noindent Certified that the mini project work entitled \textbf{``ExamGrid: An Automated Exam Seating and Invigilation Allocation System using Spring Boot''} is a bona fide work carried out by
-\begin{center}
-\begin{tabular}{l l}
-Prajwal Jogi & NNM25CS522\\
-Prajwal Acharya & NNM25CS521\\
-Sathwik P Shetty & NNM24CS224\\
-Satvik Hegde & NNM24CS225\\
-\end{tabular}
+{\Large CERTIFICATE\par}
 \end{center}
-\noindent in partial fulfilment of the requirements of the Java and Spring Framework Laboratory (CS3603-1) of the V semester B.Tech in Computer Science and Engineering during the academic year 2026--27. The mini project report has been approved as it satisfies the academic requirements in respect of the laboratory work prescribed for the said course.
-\vspace{2.5cm}
-
-\noindent\begin{tabular}{@{}p{7cm}p{7cm}@{}}
-\rule{5cm}{0.4pt} & \rule{5cm}{0.4pt}\\
-Signature of the Course Instructor & Signature of the HOD\\
+\vspace{0.2cm}
+{\doublespacing\itshape\setlength{\parskip}{0pt}
+This is to certify that the Mini-Project report titled ``ExamGrid: An Automated Exam Seating and Invigilation Allocation System using Spring Boot'' submitted by Prajwal Jogi, Prajwal Acharya, Sathwik P Shetty, and Satvik Hegde bearing USN NNM25CS522, NNM25CS521, NNM24CS224, and NNM24CS225 of V SEM B.Tech., are bonafide students of NMAM Institute of Technology, Nitte, and have successfully completed the Mini-Project during 2026-2027 in Computer Science and Engineering at NMAM Institute of Technology, Nitte.\par}
+\vspace{3cm}
+\noindent\begin{tabular}{@{}p{9.5cm}p{5cm}@{}}
+\rule{6.6cm}{0.4pt} & \rule{3.6cm}{0.4pt}\\
+\itshape Name and Signature of the Course Instructor & \itshape Signature of the HOD\\
 \end{tabular}
-\vspace{2cm}
+\clearpage
 
-\noindent\begin{tabular}{@{}p{7cm}p{7cm}@{}}
-Name of the Examiners & Signature with Date\\[0.8cm]
-1. \rule{5cm}{0.4pt} & \rule{5cm}{0.4pt}\\[0.8cm]
-2. \rule{5cm}{0.4pt} & \rule{5cm}{0.4pt}\\
-\end{tabular}
-\newpage
+\begin{center}
+\includegraphics[width=0.62\linewidth]{images/nitte_logo.png}\par
+\vspace{0.4cm}
+{\sffamily\bfseries\large ABSTRACT\par}
+\end{center}
+{\small
+Allocating examination halls, seats and invigilators is still done manually in many institutions, usually on spreadsheets. The process takes hours and is error-prone: students of the same subject end up sitting side by side, halls get over-filled, and faculty receive overlapping duties or an uneven workload. ExamGrid is a Spring Boot web application that automates this entire workflow. The exam cell registers exams, halls with their row-column layout, students and faculty. A rule-based allocation engine then generates a conflict-free seating plan that spreads students of the same subject and branch across benches and respects hall capacity, and assigns invigilators with balanced workload and no time clashes.
 
-\thispagestyle{plain}
-\begin{center}{\Large\bfseries\color{egnavy} DECLARATION}\end{center}
+The system supports three roles. The exam cell manages all data, generates the seating and invigilation plans and exports printable seating charts and duty rosters as PDF. Students look up their hall and seat number using their USN, and faculty view their own duty roster. Every role rule is enforced on the server by Spring Security, not only by hiding links in the user interface.
+
+ExamGrid is implemented in Java 17 using Spring Boot 3, Spring MVC with Thymeleaf for the web tier, Spring Data JPA with Hibernate for persistence and MySQL 8 as the database. It follows a layered controller--service--repository architecture, exposes RESTful APIs tested with Postman and curl, and includes role-based login with session management, server-side Bean Validation and centralized exception handling with \texttt{@ControllerAdvice}. Passwords are stored as BCrypt hashes. The allocation engines are covered by JUnit 5 and MockMvc tests. The result is a platform that cuts exam planning from hours to minutes and makes exam logistics transparent for students and staff.\par}
+\clearpage
+
+\noindent{\sffamily\bfseries\large TABLE OF CONTENTS}\par
+\vspace{0.8cm}
+\begin{spacing}{1.6}
+\tocline{Title Page}{i}
+\tocline{Institution Certificate}{ii}
+\tocline{Abstract}{iii}
+\tocline{Table of Contents}{iv}
 \vspace{0.5cm}
-We hereby declare that the mini project entitled \textbf{``ExamGrid: An Automated Exam Seating and Invigilation Allocation System using Spring Boot''} submitted to the Department of Computer Science and Engineering, NMAM Institute of Technology, Nitte, is a record of the work carried out by us during the V semester of the academic year 2026--27 as part of the course CS3603-1. The work has not been submitted elsewhere for the award of any degree or credit.
-\vspace{2cm}
+\tocline{Introduction}{\pageref{ch:1}}
+\tocline{Problem Statement}{\pageref{ch:2}}
+\tocline{Objectives}{\pageref{ch:3}}
+\tocline{Technologies Used}{\pageref{ch:4}}
+\tocline{Implementation}{\pageref{ch:5}}
+\tocline{Results}{\pageref{ch:6}}
+\tocline{Conclusion and Future Scope}{\pageref{ch:7}}
+\tocline{References}{\pageref{ch:8}}
+\end{spacing}
+\clearpage
 
-\noindent\begin{tabular}{@{}p{5.5cm}p{3.5cm}p{4cm}@{}}
-Prajwal Jogi & NNM25CS522 & \rule{3.5cm}{0.4pt}\\[0.7cm]
-Prajwal Acharya & NNM25CS521 & \rule{3.5cm}{0.4pt}\\[0.7cm]
-Sathwik P Shetty & NNM24CS224 & \rule{3.5cm}{0.4pt}\\[0.7cm]
-Satvik Hegde & NNM24CS225 & \rule{3.5cm}{0.4pt}\\
-\end{tabular}
-
-\vspace{1cm}\noindent Place: Nitte\\Date: \rule{3cm}{0.4pt}
-\newpage
-
-\thispagestyle{plain}
-\begin{center}{\Large\bfseries\color{egnavy} ACKNOWLEDGEMENT}\end{center}
-\vspace{0.5cm}
-We express our sincere gratitude to our course instructor for the Java and Spring Framework Laboratory for the guidance, encouragement and valuable feedback given throughout this mini project.
-
-We thank the Head of the Department of Computer Science and Engineering for providing the laboratory facilities and an environment that encouraged us to complete this work.
-
-We are grateful to the Principal, NMAM Institute of Technology, Nitte, for the support extended to the students.
-
-We also thank the staff of the examination cell for explaining the present seating and invigilation process, which helped us understand the real requirements of the system.
-
-Finally, we thank our parents and friends for their constant support.
-\vspace{1cm}
-
-\hfill Prajwal Jogi\\
-\hspace*{\fill} Prajwal Acharya\\
-\hspace*{\fill} Sathwik P Shetty\\
-\hspace*{\fill} Satvik Hegde
-\newpage
-
-\thispagestyle{plain}
-\begin{center}{\Large\bfseries\color{egnavy} ABSTRACT}\end{center}
-\vspace{0.3cm}
-Allocating examination halls, seats and invigilators is still done manually in many institutions, usually on spreadsheets. The process takes hours and is error-prone: students of the same subject end up sitting side by side, halls get over-filled, and faculty receive overlapping duties or an uneven workload. ExamGrid is a Spring Boot web application that automates this entire workflow. The exam cell registers exams, halls (with their row-column layout), students and faculty. A rule-based allocation engine then generates a conflict-free seating plan that spreads students of the same subject and branch across benches and respects hall capacity. It also assigns invigilators with balanced workload and no time clashes. Students can look up their hall and seat number using their USN, faculty can view their duty roster, and the exam cell can export printable seating charts and duty lists.
-
-The system follows a layered MVC architecture. It uses Spring MVC with Thymeleaf for the user interface and Spring Data JPA with Hibernate for persistence in MySQL. RESTful APIs, tested with Postman and curl, serve seat lookup and roster data. It also includes role-based login with session management, server-side validation, and centralized exception handling for cases such as record not found or insufficient hall capacity. On the sample data of 148 students, four halls and ten faculty, the engine seats every student with zero same-subject neighbours and assigns fourteen invigilation duties with no clashes and a workload difference of at most one duty, replacing hours of manual planning with an operation that completes in well under a second.
-
-\vspace{0.3cm}\noindent\textbf{Keywords:} Spring Boot, Spring MVC, Thymeleaf, Spring Data JPA, Hibernate, MySQL, REST API, exam seating allocation, invigilation scheduling.
-\newpage
-
-\tableofcontents
-\listoffigures
-\listoftables
-\newpage
+\pagestyle{body}
 \pagenumbering{arabic}
 
 \chapter{Introduction}
-\section{Overview}
-Examinations are conducted several times every semester -- two internal assessments and the semester-end examination -- and for each examination session the examination cell must decide where every student sits and which faculty member supervises each hall. In most colleges this planning is done in spreadsheets by copying student lists into hall layouts. ExamGrid replaces this manual work with a web application built on the Spring Framework.
+Every semester an engineering college conducts several rounds of examinations: two internal assessments and the semester-end examination. For each examination session the examination cell has to decide which hall and which bench every student sits on, and which faculty member supervises each hall. At NMAM Institute of Technology, Nitte, as in many institutions, this planning is still done by copying student lists into spreadsheet templates of each hall and assigning duties from a faculty list.
 
-\section{Problem Statement}
-Design and implement a web application that automatically generates a conflict-free examination seating plan and a balanced, clash-free invigilation duty roster from the exam timetable, hall layouts, student list and faculty list, and that lets students and faculty look up their allocations online.
+Because the work is manual, it takes several hours for a single exam day and has to be repeated whenever the timetable changes. Students writing the same subject are sometimes placed next to each other, halls get over-filled while others remain partly empty, and a faculty member may receive two duties at the same time or many more duties than colleagues. Students crowd around notice boards before the exam to find their seat.
 
-\section{Objectives}
-\begin{enumerate}
-  \item Maintain students, faculty, halls and exams through a secure web interface.
-  \item Generate seating that respects hall capacity and keeps students of the same subject apart.
-  \item Assign invigilators without time clashes and with balanced workload.
-  \item Provide seat lookup by USN and duty rosters through REST APIs and the Fetch API.
-  \item Produce printable PDF seating charts and duty rosters.
-  \item Apply Spring Boot, Spring MVC, Thymeleaf, Spring Data JPA, Spring Security, Bean Validation and \texttt{@ControllerAdvice} in one complete project.
-\end{enumerate}
+ExamGrid addresses this problem by automating the complete workflow in one web application. The exam cell enters the halls, students, faculty and exam timetable once, and the system generates the seating plan and the invigilation roster for each exam slot with a single click. Students and faculty see their allocations online, and printable charts are produced from the same data, so every copy is always consistent.
 
-\section{Scope}
-The project covers master data management, seating and invigilation allocation, PDF export, online lookup, a REST API and role-based security. Question papers, results and notifications are outside the scope.
-
-\section{Organization of the Report}
-Chapter 2 reviews the existing system. Chapter 3 lists the requirements. Chapter 4 explains the design and database. Chapter 5 describes the allocation algorithms. Chapter 6 covers the implementation, Chapter 7 the REST API and testing, and Chapter 8 the results with screenshots. Chapter 9 concludes the report and lists future enhancements.
-
-\chapter{Literature Survey and Existing System}
-\section{Existing Manual System}
+\subsection{Scope of the Project}
+The project covers the complete exam-allocation workflow inside the platform:
 \begin{itemize}
-  \item Student lists are exported from the university portal and pasted into spreadsheet templates of each hall.
-  \item Mixing of subjects is done by hand, for example by alternating two branches column by column.
-  \item Invigilation duties are assigned from a faculty list, often in the order of the list, and clashes are checked by eye.
-  \item Seat charts are printed and pasted outside halls; students crowd around notice boards before the exam.
+  \item Role-based login for the exam cell (administrator), faculty and students.
+  \item Management of students, faculty, examination halls (rows and columns) and the exam timetable.
+  \item Automatic seating allocation per exam slot that respects hall capacity and keeps students of the same subject apart.
+  \item Automatic invigilator allocation with no time clashes and a balanced workload.
+  \item Public seat lookup by USN, faculty duty roster, and PDF export of seating charts and duty lists.
+  \item A REST API for all operations, tested with Postman and curl.
 \end{itemize}
-\section{Drawbacks}
-\begin{itemize}
-  \item Time consuming: several hours per exam day, repeated for every timetable change.
-  \item Error prone: over-filled halls, students of the same subject side by side, duplicate seats.
-  \item Unfair workload: some faculty receive many more duties than others; overlapping duties are discovered late.
-  \item No self-service: students and faculty depend on notice boards and circulars.
-\end{itemize}
-\section{Related Work}
-Exam seating and invigilator assignment are studied in operations research as variants of the \emph{graph colouring} and \emph{assignment} problems. Exact formulations using integer linear programming or constraint programming give optimal answers but need specialised solvers and long running times for large inputs. Many practical systems use \emph{greedy heuristics} -- such as placing the largest remaining group first and checking only already-placed neighbours -- because they are fast, simple and produce conflict-free plans in typical college settings. Commercial examination management modules in ERP products include seating features but are expensive and not adaptable to a department's own rules. ExamGrid follows the greedy approach and implements it transparently in two small Java service classes.
-\section{Proposed System}
-ExamGrid automates the complete workflow: the exam cell enters master data once, generates the seating and invigilation plan per slot with a click, and publishes it instantly. Students and faculty see their allocation online, and printable PDFs are produced from the same data, so all copies are always consistent.
 
-\chapter{Requirement Specification}
-\section{Functional Requirements}
-\begin{tabularx}{\linewidth}{|l|X|}
-\hline\headrow\thead{Module} & \thead{Requirements}\\\hline
-Authentication & Login for ADMIN, FACULTY and STUDENT; BCrypt passwords; role-based pages; one session per user.\\\hline
-Master data & CRUD of students, faculty, halls and exams with validation; unique USN, faculty code and hall name; exam timing checks.\\\hline
-Seating & Generate per slot; every student exactly once; within capacity; no same-subject neighbours when space allows; prefer different branches; report unavoidable clashes.\\\hline
-Invigilation & After seating; $\lceil s/30\rceil$ per hall; no time clash; respect maximum duties; least-loaded first; all-or-nothing.\\\hline
-Lookup and reports & Public seat lookup by USN; own seats for students; own duties for faculty; PDF seating chart and duty roster.\\\hline
-REST API & JSON endpoints for all operations with uniform error responses.\\\hline
-\end{tabularx}
-\section{Non-Functional Requirements}
-Performance (allocation of 1000 students in under 3 s), security (authentication, CSRF, session fixation protection), reliability (transactional allocation), usability (responsive pages), maintainability (layered code), testability (automated tests). The complete numbered list with 46 functional and 10 non-functional requirements is given in Document 01 (SRS).
-\section{Hardware and Software Requirements}
-\begin{tabularx}{\linewidth}{|l|X|}
-\hline\headrow\thead{Item} & \thead{Requirement}\\\hline
-Processor / RAM & Any dual-core processor, 4 GB RAM (2 GB free for the application)\\\hline
-Operating system & Windows 10/11, Ubuntu 20.04+ or macOS\\\hline
-Java & JDK 17 or newer\\\hline
-Build tool & Apache Maven 3.9\\\hline
-Database & MySQL Server 8.0\\\hline
-IDE & IntelliJ IDEA / Eclipse / VS Code with Spring Boot extensions\\\hline
-Browser & Chrome, Edge or Firefox (latest)\\\hline
-Testing & Postman, curl, JUnit 5\\\hline
-\end{tabularx}
-\section{Use Cases}
+\subsection{Organisation of the Report}
+Chapter 2 states the problem addressed by the project and Chapter 3 lists its objectives. Chapter 4 describes the technologies used. Chapter 5 explains the architecture, database design, allocation algorithms and implementation of each module. Chapter 6 presents the results, and Chapter 7 concludes the report and outlines future work.
+
+\chapter{Problem Statement}
+Exam seating and invigilation planning at Nitte is done manually on spreadsheets. This leads to the following problems:
+\begin{itemize}
+  \item \textbf{Time consuming:} preparing seating charts and duty lists takes hours for every exam day and must be redone when the timetable changes.
+  \item \textbf{Malpractice risk:} students of the same subject are often seated side by side, which makes copying easy.
+  \item \textbf{Capacity errors:} halls are over-filled or seats are wasted because capacity is not tracked consistently.
+  \item \textbf{Unfair and clashing duties:} faculty receive overlapping duties or an uneven number of duties.
+  \item \textbf{No self-service:} students and faculty depend on notice boards and circulars to find their allocation.
+\end{itemize}
+The problem is therefore to design and implement a secure, role-based web application in which the exam cell can generate a conflict-free seating plan and a balanced, clash-free invigilation roster automatically from the timetable, halls, students and faculty, and in which students and faculty can look up their allocations online, with all data stored consistently in a relational database.
+
+\chapter{Objectives}
+The objectives of the ExamGrid mini-project are:
+\begin{itemize}
+  \item To build a web application in which the exam cell manages students, faculty, halls and the exam timetable in one place.
+  \item To provide role-based access for three types of users: exam cell (administrator), faculty and students.
+  \item To generate a seating plan for every exam slot that never exceeds hall capacity and avoids placing two students of the same subject next to each other.
+  \item To assign invigilators to every hall in use with zero time clashes, within each faculty member's duty limit and with a balanced workload.
+  \item To let students find their hall and seat by USN and faculty view their duty roster, using REST APIs and the JavaScript Fetch API.
+  \item To export printable seating charts, attendance sheets and duty rosters as PDF files.
+  \item To store all data reliably in a MySQL database accessed through Spring Data JPA and Hibernate.
+  \item To apply the Spring concepts learnt in the lab: Spring Boot, Spring MVC, Thymeleaf, Spring Data JPA, Spring Security, Bean Validation and centralized exception handling.
+\end{itemize}
+
+\chapter{Technologies Used}
+ExamGrid is a Spring Boot web application. The table below lists the technologies and versions used.
+\begin{table}[H]
+\begin{gridtable}{|L{4.6cm}|L{2.6cm}|X|}
+\hline
+\hd{Component} & \hd{Version} & \hd{Purpose}\\\hline
+Java (OpenJDK) & 17 & Programming language and runtime\\\hline
+Spring Boot & 3.3.5 & Auto-configuration, embedded Tomcat, starters\\\hline
+Spring MVC & 6.1 & Web controllers and REST controllers\\\hline
+Thymeleaf & 3.1 & Server-side HTML templates\\\hline
+Spring Data JPA / Hibernate & 3.3 / 6.5 & Repositories and object-relational mapping\\\hline
+Spring Security & 6.3 & Login, roles, sessions, CSRF protection\\\hline
+Jakarta Bean Validation & 3.0 & Server-side validation of form and JSON input\\\hline
+MySQL / Connector/J & 8 & Relational database and JDBC driver\\\hline
+OpenPDF & 1.3.43 & PDF seating charts and duty rosters\\\hline
+Bootstrap (WebJar) & 5.3.3 & Responsive page layout\\\hline
+JavaScript Fetch API & -- & Live seat lookup and roster calls\\\hline
+Apache Maven & 3.9 & Build and dependency management\\\hline
+JUnit 5, MockMvc, H2 & 5.10 & Unit, integration and API tests\\\hline
+Postman, curl & -- & Manual REST API testing\\\hline
+\end{gridtable}
+\caption{Technologies used in ExamGrid}
+\end{table}
+
+\subsection{Java 17}
+Java is an object-oriented, platform-independent language. Java 17 is a long-term support release and provides modern features such as records, switch expressions and text blocks. ExamGrid uses records for its response objects (\texttt{SeatInfo}, \texttt{DutyInfo}, \texttt{SeatingResult}) and \texttt{LocalDate}/\texttt{LocalTime} for exam dates and timings.
+
+\subsection{Spring Boot and Spring MVC}
+Spring Boot configures the application automatically from the dependencies on the class path and runs it on an embedded Tomcat server, so the whole system starts with \texttt{mvn spring-boot:run}. Spring MVC maps HTTP requests to controller methods: \texttt{@Controller} classes return Thymeleaf views for the browser, and \texttt{@RestController} classes return JSON for the REST API. All dependencies are supplied through constructor injection.
+
+\subsection{Thymeleaf and Bootstrap}
+Thymeleaf renders HTML pages on the server from templates such as \texttt{admin/seating.html}. Common parts (head, navigation bar, alerts, footer) are reusable fragments. The Spring Security dialect shows only the menu links allowed for the logged-in role. Bootstrap 5, served as a WebJar so that it works offline in the lab, makes the pages responsive.
+
+\subsection{Spring Data JPA, Hibernate and MySQL}
+MySQL 8 stores students, faculty, halls, exams, seat allocations, invigilation duties and user accounts. Entities are mapped with JPA annotations and accessed through Spring Data JPA repository interfaces, which generate queries from method names such as \texttt{findByBranchAndSemesterOrderByUsnAsc}. Custom JPQL queries with \texttt{join fetch} load related data in one query.
+
+\subsection{Spring Security}
+Spring Security provides form login with sessions for the web pages and HTTP Basic authentication for the REST API. Passwords are stored as BCrypt hashes. URL rules restrict \texttt{/admin/**} to the exam cell, \texttt{/faculty/**} to faculty and \texttt{/student/**} to students.
+
+\subsection{OpenPDF, Maven and JUnit 5}
+OpenPDF creates the seating chart and duty roster PDFs in memory. Apache Maven manages dependencies, compiles the code, runs the tests and packages the application. JUnit 5 with Spring's MockMvc tests the allocation engines and the REST API on an in-memory H2 database.
+
+\chapter{Implementation}
+\subsection{System Architecture}
+ExamGrid follows a layered architecture in which each layer has one responsibility and depends only on the layer below it:
+\begin{itemize}
+  \item \textbf{View layer:} Thymeleaf templates such as \texttt{login.html}, \texttt{admin/allocation.html}, \texttt{admin/seating.html} and \texttt{seat-lookup.html}.
+  \item \textbf{Controller layer:} web controllers (\texttt{StudentWebController}, \texttt{AllocationWebController} and others) handle forms and pages; REST controllers (\texttt{SeatLookupApiController}, \texttt{AllocationApiController} and others) return JSON.
+  \item \textbf{Service layer:} \texttt{SeatingAllocationService} and \texttt{InvigilationAllocationService} contain the allocation rules; CRUD services, \texttt{UserAccountService} and \texttt{ReportPdfService} contain the remaining business logic.
+  \item \textbf{Repository layer:} Spring Data JPA interfaces such as \texttt{StudentRepository} and \texttt{SeatAllocationRepository}.
+  \item \textbf{Model layer:} the entities \texttt{Student}, \texttt{Faculty}, \texttt{Hall}, \texttt{Exam}, \texttt{SeatAllocation}, \texttt{InvigilationDuty} and \texttt{AppUser}.
+  \item \textbf{Cross-cutting:} \texttt{SecurityConfig} with two security filter chains, and \texttt{ApiExceptionHandler} and \texttt{WebExceptionHandler} for centralized error handling.
+\end{itemize}
 \begin{figure}[H]\centering
-\resizebox{0.92\linewidth}{!}{\input{figures/usecase}}
-\caption{Use case diagram of ExamGrid}
+\resizebox{0.8\linewidth}{!}{\input{figures/architecture}}
+\caption{Layered architecture of ExamGrid}
 \end{figure}
 
-\chapter{System Design}
-\section{Architecture}
-ExamGrid follows the layered MVC architecture of Spring Boot (Figure~\ref{fig:arch5}). Requests pass through two Spring Security filter chains -- HTTP Basic for \texttt{/api/**} and form login with sessions for the web pages -- and reach either a \texttt{@Controller} that returns a Thymeleaf view or a \texttt{@RestController} that returns JSON. Controllers delegate to \texttt{@Service} classes, which hold all business rules and use Spring Data JPA repositories to access MySQL.
-\begin{figure}[H]\centering
-\resizebox{0.82\linewidth}{!}{\input{figures/architecture}}
-\caption{Layered architecture}\label{fig:arch5}
-\end{figure}
-
-\section{Database Design}
-The database \texttt{examgrid\_db} contains seven tables. \texttt{seat\_allocations} is an associative entity linking a student, an exam and a hall with the seat position; \texttt{invigilation\_duties} links a faculty member and a hall with a time window. Unique constraints prevent the same student being seated twice in an exam and the same physical seat being used twice in a slot.
+\subsection{Database Design}
+The database \texttt{examgrid\_db} has seven tables. Foreign keys link every seat to a student, an exam and a hall, and every duty to a faculty member and a hall.
+\begin{table}[H]
+\begin{gridtable}{|L{3.2cm}|L{5.6cm}|X|}
+\hline
+\hd{Table} & \hd{Important columns} & \hd{Description}\\\hline
+students & id, usn (unique), name, branch, semester, email & Students who write exams\\\hline
+faculty & id, faculty\_code (unique), name, department, max\_duties & Invigilators and their duty limit\\\hline
+halls & id, hall\_name (unique), block, total\_rows, total\_columns & Exam halls; capacity = rows $\times$ columns\\\hline
+exams & id, subject\_code, subject\_name, branch, semester, exam\_date, start\_time, end\_time & Timetable; same date and start time form one slot\\\hline
+seat\_allocations & id, exam\_id, student\_id, hall\_id, exam\_date, start\_time, seat\_row, seat\_column, seat\_number & One seat per student per exam\\\hline
+invigilation\_duties & id, faculty\_id, hall\_id, exam\_date, start\_time, end\_time & Duty of a faculty member in a hall\\\hline
+app\_users & id, username (unique), password, role, enabled & Login accounts; role is ADMIN, FACULTY or STUDENT\\\hline
+\end{gridtable}
+\caption{Database tables}
+\end{table}
+Two unique constraints on \texttt{seat\_allocations} guarantee that a student is seated only once per exam and that a physical seat is used only once per slot.
 \begin{figure}[H]\centering
 \resizebox{\linewidth}{!}{\input{figures/er}}
 \caption{Entity-relationship diagram}
 \end{figure}
 
-\begin{table}[H]\centering\small
-\caption{Summary of tables}
-\begin{tabularx}{\linewidth}{|l|X|}
-\hline\headrow\thead{Table} & \thead{Main columns}\\\hline
-students & id, usn (unique), name, branch, semester, email\\\hline
-faculty & id, faculty\_code (unique), name, department, email, max\_duties\\\hline
-halls & id, hall\_name (unique), block, total\_rows, total\_columns\\\hline
-exams & id, subject\_code, subject\_name, branch, semester, exam\_date, start\_time, end\_time\\\hline
-seat\_allocations & id, exam\_id, student\_id, hall\_id, exam\_date, start\_time, seat\_row, seat\_column, seat\_number\\\hline
-invigilation\_duties & id, faculty\_id, hall\_id, exam\_date, start\_time, end\_time\\\hline
-app\_users & id, username (unique), password (BCrypt), role, enabled\\\hline
-\end{tabularx}
-\end{table}
-The schema is in third normal form; capacity is derived (rows $\times$ columns) rather than stored. The detailed data dictionary is in Document 02.
+\subsection{Authentication and Authorisation}
+When the exam cell adds a student or faculty member, a login account is created automatically with the USN or faculty code as the username and a default password. Passwords are never stored in plain text: Spring Security's \texttt{BCryptPasswordEncoder} stores a salted hash. \texttt{AppUserDetailsService} loads the account at login, and after a successful login the user is redirected to a page for their role.
 
-\section{Interaction Design}
-\begin{figure}[H]\centering
-\resizebox{\linewidth}{!}{\input{figures/seq_lookup}}
-\caption{Sequence diagram of seat lookup}
-\end{figure}
+Two security filter chains are configured. The chain for \texttt{/api/**} uses HTTP Basic authentication so that Postman and curl can call the API; seat lookup is public, a faculty member may read only his or her own roster, and all other API calls need the exam cell role. The chain for the web pages uses a custom login page, CSRF protection, session fixation protection and one active session per user. Opening a page meant for another role shows an access-denied page.
 
-\chapter{Allocation Algorithms}
-\section{Seating Allocation}
-Exams sharing the same date and start time form a \emph{slot}. For a slot, the engine builds one queue of students per exam, checks that the total number of students fits into the total hall capacity, and then fills halls (largest first) seat by seat, row by row. For every seat it looks at the already-filled left and front neighbours and chooses the exam with the most waiting students whose subject and branch differ from both. If no such exam exists it relaxes the branch rule; if still none exists it leaves the seat empty when spare seats remain, or else places the student and counts an unavoidable clash.
+\subsection{Seating Allocation Algorithm}
+All exams with the same date and start time form a \emph{slot}. For a slot, \texttt{SeatingAllocationService} builds one queue of students per exam (all students of the exam's branch and semester) and checks that the total number of students does not exceed the total hall capacity; otherwise it stops with an \texttt{InsufficientCapacityException}. It then fills the halls, largest first, seat by seat and row by row. For each seat it looks at the already-filled left and front neighbours and chooses the exam with the most waiting students whose subject and branch differ from both. If none exists it relaxes the branch rule; if still none exists it leaves the seat empty while spare seats remain, and only places the student next to the same subject when there is no other way to seat everyone, counting it as a clash.
 \begin{figure}[H]\centering
-\resizebox{!}{0.6\textheight}{\input{figures/seating_flow}}
+\resizebox{!}{0.55\textheight}{\input{figures/seating_flow}}
 \caption{Seating allocation flowchart}
 \end{figure}
+Because each seat is compared with its left and front neighbours at the time it is filled, no two adjacent seats ever hold the same subject when space allows. Choosing the largest waiting group first keeps the queues balanced, so the last seats are not left with a single subject.
 \begin{figure}[H]\centering
 \input{figures/seat_example}
-\caption{Illustrative seating pattern}
+\caption{Illustrative seating pattern; equal letters never touch}
 \end{figure}
-\section{Invigilation Allocation}
-After seating, the engine counts the students in each used hall and requires $\lceil s/30\rceil$ invigilators per hall. For each required invigilator it considers only faculty who have not reached their duty limit and have no duty overlapping the slot, and picks the one with the fewest duties so far. If nobody is free, the whole operation is rolled back.
+
+\subsection{Invigilation Allocation Algorithm}
+After seating, \texttt{InvigilationAllocationService} counts the students in each used hall and requires one invigilator for every 30 students (at least one). For each required invigilator it considers only faculty who have not reached their maximum duties and who have no duty overlapping the slot on that date, and picks the one with the fewest duties so far. Two duties overlap when one starts before the other ends. If no faculty member is free, an \texttt{AllocationException} is thrown and the transaction rolls back, so no partial roster is saved.
 \begin{figure}[H]\centering
 \resizebox{!}{0.5\textheight}{\input{figures/invigilation_flow}}
 \caption{Invigilation allocation flowchart}
 \end{figure}
-\section{Complexity}
-Seating runs in $O(P \cdot k)$ for $P$ seats and $k$ exams in a slot; invigilation runs in $O(I \cdot (|F| + D))$ for $I$ required invigilators, $|F|$ faculty and $D$ existing duties. Both are linear for practical purposes. Proofs of the constraints and a full worked example are in Document 03.
 
-\chapter{Implementation}
-\section{Project Structure}
+\subsection{Modules}
+\textbf{Exam cell module.} The dashboard shows counts of students, faculty, halls, seats and exams, the upcoming exam slots and the workload of each faculty member. Separate pages manage students, faculty, halls and exams; each has a form with field-level validation messages and a searchable table with edit and delete actions. The allocation page lists every slot with buttons to generate seating, assign invigilators, view the plan and download the seating PDF. The seating plan page shows each hall as a colour-coded grid, and the duties page shows the roster with a date filter and a PDF download.
+
+\textbf{Faculty module.} After login a faculty member sees his or her own invigilation duties with date, time, hall and block. The page loads the roster from \texttt{/api/duties/faculty/\{code\}} using the Fetch API.
+
+\textbf{Student module.} A student can enter a USN on the public seat lookup page, or log in to see his or her seats automatically. Each result card shows the subject, date, time, hall, block, row, bench and seat number.
+
+\textbf{Reports.} \texttt{ReportPdfService} builds a seating chart PDF with one grid page and one attendance sheet per hall, and a duty roster PDF with a signature column.
+
+\subsection{Validation and Exception Handling}
+Entities carry Bean Validation annotations such as \texttt{@NotBlank}, \texttt{@Pattern} for the USN, \texttt{@Min}/\texttt{@Max} for semester and hall size, and \texttt{@Email}. Controllers check them with \texttt{@Valid}. The exam service also rejects an exam whose end time is not after its start time, or which overlaps another exam of the same branch and semester. Custom exceptions (\texttt{ResourceNotFoundException}, \texttt{DuplicateResourceException}, \texttt{InsufficientCapacityException}, \texttt{AllocationException}, \texttt{InvalidRequestException}) are handled in one place: \texttt{ApiExceptionHandler} returns a JSON error body with the correct HTTP status, and \texttt{WebExceptionHandler} shows an error page.
+
+\subsection{REST API}
+\begin{table}[H]
+\begin{gridtable}{|L{2.7cm}|X|L{3.2cm}|}
+\hline
+\hd{Method} & \hd{Endpoint} & \hd{Access}\\\hline
+GET, POST & /api/students, /api/faculty, /api/halls, /api/exams & Exam cell\\\hline
+GET, PUT, DELETE & /api/\{resource\}/\{id\} & Exam cell\\\hline
+POST, GET & /api/allocations/seating?date=\&startTime= & Exam cell\\\hline
+POST & /api/allocations/invigilation?date=\&startTime= & Exam cell\\\hline
+GET & /api/seats/\{usn\} & Public\\\hline
+GET & /api/duties/faculty/\{code\} & Exam cell, own faculty\\\hline
+GET & /api/duties, /api/duties/workload & Exam cell\\\hline
+\end{gridtable}
+\caption{Main REST endpoints}
+\end{table}
+Example request with curl:
 \begin{lstlisting}[style=plain]
-ExamGrid/
-  pom.xml
-  src/main/java/com/examgrid/
-    ExamGridApplication.java
-    config/  controller/api/  controller/web/  dto/  entity/
-    exception/  repository/  security/  service/
-  src/main/resources/
-    application.properties
-    templates/ (index, login, seat-lookup, admin/*, faculty/*, student/*, error/*)
-    static/css/style.css   static/js/seat-lookup.js   static/js/table-filter.js
-  src/test/java/com/examgrid/  (JUnit and MockMvc tests)
-  docs/ (schema.sql, Postman collection, LaTeX reports)
-\end{lstlisting}
-
-\section{Modules}
-\begin{tabularx}{\linewidth}{|L{3.4cm}|X|}
-\hline\headrow\thead{Module} & \thead{Implementation}\\\hline
-Entities & \texttt{Student}, \texttt{Faculty}, \texttt{Hall}, \texttt{Exam}, \texttt{SeatAllocation}, \texttt{InvigilationDuty}, \texttt{AppUser} with JPA and Bean Validation annotations; lazy many-to-one associations.\\\hline
-Repositories & Interfaces extending \texttt{JpaRepository}; derived queries such as \texttt{findByBranchAndSemesterOrderByUsnAsc}; JPQL with \texttt{join fetch}; \texttt{@Modifying} bulk deletes.\\\hline
-Services & CRUD services, the two allocation engines, \texttt{UserAccountService} and \texttt{ReportPdfService}.\\\hline
-Web controllers & Form handling with \texttt{@Valid} and \texttt{BindingResult}; Post/Redirect/Get with flash attributes.\\\hline
-REST controllers & JSON endpoints under \texttt{/api} returning entities or DTO records.\\\hline
-Exception handling & Custom exceptions; \texttt{ApiExceptionHandler} and \texttt{WebExceptionHandler}.\\\hline
-Security & Two \texttt{SecurityFilterChain} beans, \texttt{AppUserDetailsService}, BCrypt.\\\hline
-Views & Thymeleaf layout fragments (head, navbar, alerts, footer), Bootstrap 5 WebJar, Spring Security dialect for role-based menus.\\\hline
-\end{tabularx}
-
-\section{Key Code}
-\subsection{Entity with Validation}
-\lstinputlisting[style=java,firstline=15,lastline=42,firstnumber=15,caption={Student entity (excerpt)}]{\src/entity/Student.java}
-
-\subsection{Repository}
-\lstinputlisting[style=java,firstline=14,lastline=47,firstnumber=14,caption={SeatAllocationRepository (excerpt)}]{\src/repository/SeatAllocationRepository.java}
-
-\subsection{Seating Engine Core Loop}
-\lstinputlisting[style=java,firstline=92,lastline=124,firstnumber=92,caption={Seat-by-seat placement in SeatingAllocationService}]{\src/service/SeatingAllocationService.java}
-
-\subsection{Web Controller with Validation}
-\lstinputlisting[style=java,firstline=43,lastline=63,firstnumber=43,caption={StudentWebController.save}]{\src/controller/web/StudentWebController.java}
-
-\subsection{REST Controller}
-\lstinputlisting[style=java,firstline=14,lastline=27,firstnumber=14,caption={SeatLookupApiController}]{\src/controller/api/SeatLookupApiController.java}
-
-\subsection{Fetch API on the Client}
-\lstinputlisting[language=Java,style=plain,firstline=36,lastline=56,firstnumber=36,numbers=left,numberstyle=\tiny\color{gray},caption={loadSeats in seat-lookup.js}]{../../src/main/resources/static/js/seat-lookup.js}
-
-\subsection{Thymeleaf Seating Grid}
-\lstinputlisting[style=plain,firstline=28,lastline=45,caption={Hall grid in admin/seating.html}]{../../src/main/resources/templates/admin/seating.html}
-
-\chapter{REST API and Testing}
-\section{REST Endpoints}
-\begin{tabularx}{\linewidth}{|L{2.6cm}|X|L{2.8cm}|}
-\hline\headrow\thead{Method} & \thead{Endpoint} & \thead{Access}\\\hline
-GET, POST & /api/students, /api/faculty, /api/halls, /api/exams & ADMIN\\\hline
-GET, PUT, DELETE & /api/\{resource\}/\{id\} & ADMIN\\\hline
-GET & /api/exams/slots & ADMIN\\\hline
-POST, GET & /api/allocations/seating?date=\&startTime= & ADMIN\\\hline
-POST & /api/allocations/invigilation?date=\&startTime= & ADMIN\\\hline
-GET & /api/seats/\{usn\} & public\\\hline
-GET & /api/duties, /api/duties/workload & ADMIN\\\hline
-GET & /api/duties/faculty/\{code\} & ADMIN, own FACULTY\\\hline
-\end{tabularx}
-
-\noindent Example:
-\begin{lstlisting}[style=bash]
 curl -u admin:admin123 -X POST "http://localhost:8080/api/allocations/seating?date=2026-12-07&startTime=09:30"
 curl http://localhost:8080/api/seats/NNM24CS224
 \end{lstlisting}
-\begin{lstlisting}[style=json]
-{ "examDate": "2026-12-07", "startTime": "09:30:00", "examsInSlot": 4,
-  "studentsSeated": 148, "hallsUsed": 3, "adjacentSameSubjectPairs": 0 }
-\end{lstlisting}
-All endpoints with curl commands, request bodies, responses and error cases are documented in Document 04, and a ready Postman collection is provided in \texttt{docs/postman}.
 
-\section{Testing}
-\begin{tabularx}{\linewidth}{|l|X|c|}
-\hline\headrow\thead{Test class} & \thead{Focus} & \thead{Tests}\\\hline
-SeatingAllocationServiceTest & one seat per student, capacity, no same-subject neighbours, re-run, capacity error, empty slot, single-subject slot & 7\\\hline
-InvigilationAllocationServiceTest & seating first, enough invigilators, no clash, balance, duty limit, 30-student rule, unknown faculty & 7\\\hline
-ApiControllerTest (MockMvc) & public lookup, 404, 401/403/200, validation errors, own roster only, 422 & 6\\\hline
-\end{tabularx}
-\noindent The tests run with \texttt{mvn test} on an in-memory H2 database in MySQL mode with the sample data. In addition, 33 manual test cases (TC-01 to TC-44) cover the user interface, PDF export and mobile view; they are listed with a traceability matrix in Document 04.
+\subsection{Testing}
+JUnit 5 tests run on the full Spring context with an in-memory H2 database and the sample data. \texttt{SeatingAllocationServiceTest} checks that every student gets exactly one seat, that no hall exceeds its capacity, that no neighbours write the same subject, and that too-small halls are rejected. \texttt{InvigilationAllocationServiceTest} checks clash-free duties, the 30-students rule, the duty limit and workload balance. \texttt{ApiControllerTest} uses MockMvc to check the public lookup, the 401/403 responses, validation errors and that a faculty member cannot read another faculty member's roster. The tests are run with \texttt{mvn test}; the APIs were also tested manually with Postman and curl.
 
-\chapter{Results}
-\section{Allocation Results on Sample Data}
-\begin{table}[H]\centering
-\caption{Seating results per slot (148 students, 4 halls, 192 seats)}
-\begin{tabular}{|l|c|c|c|c|}
-\hline\headrow\thead{Slot} & \thead{Exams} & \thead{Students} & \thead{Halls used} & \thead{Same-subject pairs}\\\hline
-07-Dec 09:30 & 4 & 148 & SH-01, LH-201, LH-101 & 0\\\hline
-08-Dec 09:30 & 3 & 108 & SH-01, LH-201 & 0\\\hline
-08-Dec 14:00 & 1 & 40 & SH-01 (32), LH-201 (8) & 0\\\hline
-\end{tabular}
-\end{table}
-\begin{table}[H]\centering
-\caption{Invigilation results}
-\begin{tabular}{|l|c|c|}
-\hline\headrow\thead{Measure} & \thead{Manual process (typical)} & \thead{ExamGrid}\\\hline
-Duties assigned (3 slots) & 14 & 14\\\hline
-Time clashes & checked by eye & 0 (guaranteed)\\\hline
-Workload spread (max $-$ min) & not tracked & 1\\\hline
-Time to prepare & hours & under one second per slot\\\hline
-\end{tabular}
-\end{table}
+\chapter{Results and Discussion}
+ExamGrid was built with Maven, run with \texttt{mvn spring-boot:run} and tested with the sample data that the application loads into MySQL on first start: 148 students of four classes, four halls with 192 seats, ten faculty members and eight exams in three slots. The application is opened at \texttt{http://localhost:8080}. The following screens show the main features.
 
-\section{Screenshots}
 \screenshot{01_home}{Home page}
 \screenshot{02_login}{Login page}
 \screenshot{03_admin_dashboard}{Exam cell dashboard}
@@ -340,66 +390,54 @@ Time to prepare & hours & under one second per slot\\\hline
 \screenshot{05_halls}{Hall management}
 \screenshot{06_exams}{Exam timetable}
 \screenshot{07_allocation}{Allocation page with exam slots}
-\screenshot{08_seating_plan}{Generated seating plan (colour per subject)}
-\screenshot{09_duties}{Invigilation duty roster and workload}
+\screenshot{08_seating_plan}{Generated seating plan, one colour per subject}
+\screenshot{09_duties}{Invigilation duty roster and workload balance}
 \screenshot{10_seating_pdf}{Seating chart PDF}
 \screenshot{11_seat_lookup}{Public seat lookup by USN}
-\screenshot{12_faculty_duties}{Faculty duty view}
+\screenshot{12_faculty_duties}{Faculty view of own duties}
 \screenshot{13_postman}{Seat lookup API tested in Postman}
-\screenshot{14_tests}{JUnit test results (mvn test)}
 
-\chapter{Conclusion and Future Enhancements}
-\section{Conclusion}
-ExamGrid automates exam seating and invigilation allocation with a clean Spring Boot application. The rule-based engines satisfy all hard constraints -- every student seated once, hall capacity respected, no invigilator time clashes, duty limits honoured -- and in practice also achieve zero same-subject neighbours and an almost perfectly balanced invigilation workload. Students and faculty get self-service access to their allocations, and the exam cell gets printable charts and rosters from the same consistent data. The project gave us hands-on experience with the complete Spring ecosystem covered in CS3603-1: dependency injection, Spring MVC and Thymeleaf, Spring Data JPA with Hibernate and MySQL, Spring Security, Bean Validation, REST API design and centralized exception handling.
+\subsection*{Discussion}
+The allocation rules give the following results on the sample data:
+\begin{table}[H]
+\begin{gridtable}{|L{3.6cm}|L{1.4cm}|L{1.8cm}|X|L{2.2cm}|}
+\hline
+\hd{Slot} & \hd{Exams} & \hd{Students} & \hd{Halls used} & \hd{Same-subject neighbours}\\\hline
+07-12-2026, 09:30 & 4 & 148 & SH-01 (64), LH-201 (56), LH-101 (28) & 0\\\hline
+08-12-2026, 09:30 & 3 & 108 & SH-01 (64), LH-201 (44) & 0\\\hline
+08-12-2026, 14:00 & 1 & 40 & SH-01 (32), LH-201 (8) & 0\\\hline
+\end{gridtable}
+\caption{Seating results on the sample data}
+\end{table}
+Every student was seated exactly once and no hall was over-filled. When several subjects shared a slot, students of the same subject were never placed next to each other; for the single-subject slot the engine left alternate seats empty, producing a chessboard pattern. If the halls were too small, the exam cell got a clear message and the old plan stayed unchanged.
 
-\section{Future Enhancements}
+For invigilation, the three slots needed 14 duties. No faculty member received two duties in the same slot, and the workload difference between the busiest and the least busy faculty member was one duty. A faculty member who opened another faculty member's roster through the API got a 403 response, and a student who opened an exam cell page was shown the access-denied page. Because all data lives in one database, the seating chart, the duty roster, the student lookup and the faculty view always show the same allocation, which was not possible with separate spreadsheets.
+
+\chapter{Conclusion and Future Scope}
+\subsection*{Conclusion}
+ExamGrid automates exam seating and invigilation allocation at Nitte. The exam cell generates a conflict-free seating plan and a balanced, clash-free duty roster for each exam slot in seconds instead of hours, students find their seat by USN and faculty see their duties online. The project applied the main concepts of the Spring Framework: Spring Boot for configuration, Spring MVC and Thymeleaf for the user interface, Spring Data JPA and Hibernate with MySQL for persistence, Spring Security for role-based access, Bean Validation and \texttt{@ControllerAdvice} for robust input and error handling, and a layered architecture that keeps the allocation rules in two clean service classes.
+
+\subsection*{Future Scope}
 \begin{itemize}
-  \item E-mail or SMS notification of seats and duties.
-  \item Bulk import of students and timetable from CSV or Excel files.
-  \item Support for students with special needs (ground-floor halls, extra time) and reserved seats.
-  \item Rule to avoid assigning faculty to invigilate their own subject.
-  \item QR code on admit cards linking to the seat lookup.
-  \item Optional optimisation using constraint programming for very large or highly constrained sessions.
-  \item Deployment on the college server with HTTPS and MySQL backups.
+  \item E-mail and SMS notification of seats and duties to students and faculty.
+  \item Bulk import of students and the exam timetable from CSV or Excel files.
+  \item Support for students with special needs, such as ground-floor halls and reserved seats.
+  \item A rule to avoid assigning faculty to invigilate exams of their own subject.
+  \item QR codes on admit cards that open the student's seat details.
+  \item Attendance marking in the hall through a mobile view for invigilators.
+  \item Deployment on the college server with HTTPS and scheduled database backups.
 \end{itemize}
 
-\begin{thebibliography}{9}
-\bibitem{boot} Spring Boot Reference Documentation, version 3.3, VMware Tanzu. \url{https://docs.spring.io/spring-boot/}
-\bibitem{sec} Spring Security Reference, version 6. \url{https://docs.spring.io/spring-security/reference/}
-\bibitem{jpa} Spring Data JPA Reference Documentation. \url{https://docs.spring.io/spring-data/jpa/reference/}
-\bibitem{thy} Thymeleaf 3.1 Documentation. \url{https://www.thymeleaf.org/documentation.html}
-\bibitem{mysql} MySQL 8.0 Reference Manual, Oracle. \url{https://dev.mysql.com/doc/refman/8.0/en/}
-\bibitem{openpdf} OpenPDF project. \url{https://github.com/LibrePDF/OpenPDF}
-\bibitem{walls} C. Walls, \emph{Spring in Action}, 6th ed., Manning Publications, 2022.
-\bibitem{ieee830} IEEE Std 830-1998, IEEE Recommended Practice for Software Requirements Specifications.
-\bibitem{clrs} T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein, \emph{Introduction to Algorithms}, 4th ed., MIT Press, 2022 (greedy algorithms and graph colouring).
-\end{thebibliography}
-
-\appendix
-\chapter{Installation and User Manual}
-\section{Installation}
-\begin{enumerate}
-  \item Install JDK 17+, Maven 3.9 and MySQL 8. Start MySQL.
-  \item Edit \texttt{src/main/resources/application.properties} if the MySQL user or password is not \texttt{root}/\texttt{root}.
-  \item In the project folder run \texttt{mvn spring-boot:run}.
-  \item Open \url{http://localhost:8080}. The database and sample data are created automatically.
+\chapter{References}
+\begin{enumerate}[label={[\arabic*]},leftmargin=1cm,itemsep=6pt]
+  \item Craig Walls, \emph{Spring in Action}, 6th Edition, Manning Publications, 2022.
+  \item Herbert Schildt, \emph{Java: The Complete Reference}, 12th Edition, McGraw Hill Education, 2021.
+  \item Spring Boot Reference Documentation, \url{https://docs.spring.io/spring-boot/}
+  \item Spring Security Reference Documentation, \url{https://docs.spring.io/spring-security/reference/}
+  \item Spring Data JPA Reference Documentation, \url{https://docs.spring.io/spring-data/jpa/reference/}
+  \item Thymeleaf Documentation, \url{https://www.thymeleaf.org/documentation.html}
+  \item MySQL 8.0 Reference Manual, Oracle Corporation, \url{https://dev.mysql.com/doc/refman/8.0/en/}
+  \item OpenPDF Library, \url{https://github.com/LibrePDF/OpenPDF}
 \end{enumerate}
-\section{Using the System}
-\begin{enumerate}
-  \item Log in as \texttt{admin} / \texttt{admin123}.
-  \item Review or add halls, students, faculty and exams. New students and faculty can log in with their USN / code and the password \texttt{Welcome@123}.
-  \item Open \emph{Allocation}. For each slot click \emph{1. Generate seating}, check the plan, then click \emph{2. Assign invigilators}.
-  \item Download the seating chart from the plan page and the duty roster from the \emph{Duties} page.
-  \item Students search their USN on \emph{Seat Lookup}; faculty log in and open \emph{My Duties}.
-\end{enumerate}
-\section{Companion Documents}
-\begin{tabularx}{\linewidth}{|l|X|}
-\hline\headrow\thead{Document} & \thead{Content}\\\hline
-01\_Project\_Proposal\_and\_SRS & Proposal, schedule, IEEE SRS with numbered requirements\\\hline
-02\_System\_Design\_and\_ERD\_Specification & Architecture, class and ER diagrams, data dictionary, security design\\\hline
-03\_Allocation\_Algorithm\_and\_Backend\_Spec & Algorithms, proofs, worked examples, exception handling, security\\\hline
-04\_REST\_API\_and\_Testing\_Report & All endpoints with curl and JSON, test plan, test cases, traceability\\\hline
-05\_Final\_Lab\_Project\_Report & This report\\\hline
-\end{tabularx}
 
 \end{document}
